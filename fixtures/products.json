@@ -1,0 +1,17 @@
+{
+  "blueTop": {
+    "name": "Blue Top",
+    "price": "Rs. 500",
+    "category": "Women"
+  },
+  "menTshirt": {
+    "name": "Men Tshirt",
+    "price": "Rs. 400",
+    "category": "Men"
+  },
+  "sleevelessDress": {
+    "name": "Sleeveless Dress",
+    "price": "Rs. 1000",
+    "category": "Women"
+  }
+} 

@@ -1,0 +1,19 @@
+{
+  "validUser": {
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "test123",
+    "firstName": "Test",
+    "lastName": "User",
+    "address": "123 Test Street",
+    "country": "United States",
+    "state": "Test State",
+    "city": "Test City",
+    "zipcode": "12345",
+    "mobileNumber": "1234567890"
+  },
+  "invalidUser": {
+    "email": "invalid@example.com",
+    "password": "wrongpassword"
+  }
+} 

@@ -1,0 +1,47 @@
+{
+  "name": "playwright-automation-framework",
+  "version": "1.0.0",
+  "description": "Advanced Playwright testing framework for AutomationExercise website with industry best practices",
+  "main": "playwright.config.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report",
+    "test:codegen": "npx playwright codegen",
+    "test:smoke": "npx playwright test e2e/login.spec.js --reporter=list",
+    "test:regression": "npx playwright test --reporter=list",
+    "test:smoke:headed": "npx playwright test e2e/login.spec.js --headed --reporter=list",
+    "test:regression:headed": "npx playwright test --headed --reporter=list",
+    "test:parallel": "npx playwright test --workers=4",
+    "test:chrome": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "install:browsers": "npx playwright install",
+    "install:browsers:chromium": "npx playwright install chromium"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "automation",
+    "e2e",
+    "page-object-model",
+    "automationexercise",
+    "javascript"
+  ],
+  "author": "Karmit Lalani",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.43.1",
+    "playwright": "^1.43.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Karmit2196/playwright-framework"
+  }
+}

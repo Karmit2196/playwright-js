@@ -1,0 +1,33 @@
+{
+  "endpoints": {
+    "products": {
+      "getAll": "/api/productsList",
+      "search": "/api/searchProduct",
+      "getProduct": "/api/getProductDetailsById"
+    },
+    "user": {
+      "create": "/api/createAccount",
+      "delete": "/api/deleteAccount",
+      "login": "/api/verifyLogin",
+      "update": "/api/updateAccount"
+    },
+    "cart": {
+      "add": "/api/addToCart",
+      "view": "/api/viewCart",
+      "update": "/api/updateCart",
+      "delete": "/api/deleteCart"
+    },
+    "brands": {
+      "getAll": "/api/brandsList",
+      "getProducts": "/api/getBrandsProductsList"
+    },
+    "categories": {
+      "getAll": "/api/getAllCategoryList",
+      "getProducts": "/api/getCategoryList"
+    }
+  },
+  "headers": {
+    "contentType": "application/json",
+    "accept": "application/json"
+  }
+} 
