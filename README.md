@@ -142,6 +142,19 @@ npm run test:report
 npx playwright show-report
 ```
 
+### **Allure Reporting**
+After running your tests, you can generate and view the Allure report:
+
+```bash
+# Generate the Allure report
+npm run allure:generate
+
+# Open the Allure report in your browser
+npm run allure:open
+```
+
+Allure results are automatically generated in the `allure-results/` directory after each test run.
+
 ## 🏗️ Architecture
 
 ### **Page Object Model (POM)**

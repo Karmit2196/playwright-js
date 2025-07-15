@@ -22,7 +22,8 @@ module.exports = defineConfig({
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }], 
     ['json', { outputFile: 'playwright-report/report.json' }],
-    ['list']
+    ['list'],
+    ['allure-playwright']
   ],
   projects: [
     {

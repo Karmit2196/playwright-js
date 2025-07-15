@@ -1,13 +1,6 @@
 name: Playwright Tests
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    # Run regression tests every Monday at 2 AM UTC
-    - cron: '0 2 * * 1'
   workflow_dispatch:
     inputs:
       test_type:
@@ -35,7 +28,7 @@ jobs:
   manual-tests:
     name: Manual Tests
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.test_type == 'manual'
+    if: github.event.inputs.test_type == 'manual'
     strategy:
       fail-fast: false
       matrix:
@@ -75,9 +68,7 @@ jobs:
   smoke-tests:
     name: Smoke Tests
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' && github.event.inputs.test_type == 'smoke' ||
-      github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event.inputs.test_type == 'smoke'
     strategy:
       fail-fast: false
       matrix:
@@ -117,10 +108,7 @@ jobs:
   regression-tests:
     name: Regression Tests
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' && github.event.inputs.test_type == 'regression' ||
-      github.event_name == 'schedule' ||
-      github.event_name == 'pull_request'
+    if: github.event.inputs.test_type == 'regression'
     strategy:
       fail-fast: false
       matrix:
@@ -160,7 +148,7 @@ jobs:
   lint-and-format:
     name: Code Quality
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: always()
 
     steps:
     - uses: actions/checkout@v4
@@ -215,97 +203,23 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
-    - name: Comment PR with results
-      uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
-      with:
-        script: |
-          const fs = require('fs');
-          const path = require('path');
-          
-          // Read test results
-          const resultsPath = path.join(process.cwd(), 'playwright-report', 'report.json');
-          if (fs.existsSync(resultsPath)) {
-            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
-            
-            const summary = {
-              total: results.suites.length,
-              passed: results.suites.filter(s => s.specs.every(spec => spec.tests.every(test => test.results.every(r => r.status === 'passed')))).length,
-              failed: results.suites.filter(s => s.specs.some(spec => spec.tests.some(test => test.results.some(r => r.status === 'failed')))).length,
-            };
-            
-            const comment = `## 🧪 Playwright Test Results
-            
-            **Summary:**
-            - ✅ Passed: ${summary.passed}
-            - ❌ Failed: ${summary.failed}
-            - 📊 Total: ${summary.total}
-            
-            [View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
-          }
+    - name: Generate Allure Report
+      run: npm run allure:generate
 
-  # Scheduled regression tests (Monday at 2 AM UTC)
-  scheduled-regression:
-    name: Scheduled Regression Tests
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, firefox, webkit]
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-
-    - name: Run Scheduled Regression Tests
-      run: npm run test:regression -- --project=${{ matrix.browser }}
-      env:
-        CI: true
-
-    - name: Upload scheduled test results
+    - name: Upload Allure Report
       uses: actions/upload-artifact@v4
-      if: always()
       with:
-        name: scheduled-regression-${{ matrix.browser }}
-        path: |
-          playwright-report/
-          test-results/
+        name: allure-report
+        path: allure-report/
         retention-days: 30
 
-    - name: Notify on failure
-      if: failure()
-      uses: actions/github-script@v7
+    - name: Deploy Allure Report to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
       with:
-        script: |
-          const issue = await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: `🚨 Scheduled Regression Tests Failed - ${new Date().toISOString().split('T')[0]}`,
-            body: `Scheduled regression tests failed on ${new Date().toISOString()}.
-            
-            **Browser:** ${{ matrix.browser }}
-            **Workflow:** ${{ github.workflow }}
-            **Run ID:** ${{ github.run_id }}
-            
-            Please check the [workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`
-          }); 
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        publish_branch: gh-pages
+        force_orphan: true
+
+    - name: Add Allure Report Link to Summary
+      run: echo "[Download Allure Report Artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY 

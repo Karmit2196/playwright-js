@@ -1,0 +1,1 @@
+Newsletter subscription success message not found, but continuing test
