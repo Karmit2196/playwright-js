@@ -50,9 +50,15 @@ jobs:
       run: npx playwright install --with-deps
 
     - name: Run Manual Tests
-      run: npx playwright test --project=${{ matrix.browser }} --reporter=list
+      run: npx playwright test --project=${{ matrix.browser }} --reporter=allure-playwright
       env:
         CI: true
+
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results-${{ matrix.browser }}
+        path: allure-results/
 
   # Smoke tests - quick validation of critical functionality
   smoke-tests:
@@ -80,9 +86,15 @@ jobs:
       run: npx playwright install --with-deps
 
     - name: Run Smoke Tests
-      run: npm run test:smoke -- --project=${{ matrix.browser }}
+      run: npm run test:smoke -- --project=${{ matrix.browser }} --reporter=allure-playwright
       env:
         CI: true
+
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results-${{ matrix.browser }}
+        path: allure-results/
 
   # Regression tests - comprehensive test suite
   regression-tests:
@@ -110,9 +122,15 @@ jobs:
       run: npx playwright install --with-deps
 
     - name: Run Regression Tests
-      run: npm run test:regression -- --project=${{ matrix.browser }}
+      run: npm run test:regression -- --project=${{ matrix.browser }} --reporter=allure-playwright
       env:
         CI: true
+
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results-${{ matrix.browser }}
+        path: allure-results/
 
   # Code quality checks
   lint-and-format:
@@ -156,6 +174,17 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
+
+    - name: Download Allure Results
+      uses: actions/download-artifact@v4
+      with:
+        path: ./allure-results-raw
+
+    - name: Merge Allure Results
+      run: |
+        mkdir -p allure-results
+        find ./allure-results-raw -type f -name '*.json' -exec cp {} allure-results/ \;
+        find ./allure-results-raw -type f -name '*.txt' -exec cp {} allure-results/ \;
 
     - name: Generate Allure Report
       run: npm run allure:generate
