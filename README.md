@@ -155,6 +155,16 @@ npm run allure:open
 
 Allure results are automatically generated in the `allure-results/` directory after each test run.
 
+## 📊 Allure Reporting (Live)
+
+The latest Allure test report is always available online via GitHub Pages:
+
+[View Live Allure Report](https://karmit2196.github.io/playwright-js/)
+
+![Allure Report Example](./screenshots/allure-report-example.png)
+
+*Example: Allure report as seen on GitHub Pages after a successful workflow run. The report is updated automatically after every CI run and shows results for all browsers and test types.*
+
 ## 🏗️ Architecture
 
 ### **Page Object Model (POM)**
