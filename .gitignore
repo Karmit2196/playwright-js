@@ -182,5 +182,9 @@ build/Release
 # Yarn Integrity file
 .yarn-integrity
 
+# Allure results and reports
+allure-results/
+allure-report/
+
 # dotenv environment variables file
 .env.test 
