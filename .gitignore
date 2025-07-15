@@ -21,6 +21,10 @@ videos/
 *.mp4
 *.webm
 
+# Allow Allure report sample image for README
+!screenshots/
+!screenshots/allure-report-example.png
+
 # Test artifacts
 test-results/
 *.zip
