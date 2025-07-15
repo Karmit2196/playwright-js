@@ -54,16 +54,6 @@ jobs:
       env:
         CI: true
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: manual-test-results-${{ matrix.browser }}
-        path: |
-          playwright-report/
-          test-results/
-        retention-days: 7
-
   # Smoke tests - quick validation of critical functionality
   smoke-tests:
     name: Smoke Tests
@@ -94,16 +84,6 @@ jobs:
       env:
         CI: true
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: smoke-test-results-${{ matrix.browser }}
-        path: |
-          playwright-report/
-          test-results/
-        retention-days: 7
-
   # Regression tests - comprehensive test suite
   regression-tests:
     name: Regression Tests
@@ -133,16 +113,6 @@ jobs:
       run: npm run test:regression -- --project=${{ matrix.browser }}
       env:
         CI: true
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: regression-test-results-${{ matrix.browser }}
-        path: |
-          playwright-report/
-          test-results/
-        retention-days: 30
 
   # Code quality checks
   lint-and-format:
@@ -187,22 +157,6 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Download all test results
-      uses: actions/download-artifact@v4
-      with:
-        path: playwright-report/
-
-    - name: Merge reports
-      run: npx playwright merge-reports ./playwright-report/
-      continue-on-error: true
-
-    - name: Upload merged report
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-report
-        path: playwright-report/
-        retention-days: 30
-
     - name: Generate Allure Report
       run: npm run allure:generate
 
@@ -222,4 +176,4 @@ jobs:
         force_orphan: true
 
     - name: Add Allure Report Link to Summary
-      run: echo "[Download Allure Report Artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY 
+      run: echo "[View Allure Report on GitHub Pages](https://karmit2196.github.io/playwright-js/)" >> $GITHUB_STEP_SUMMARY 
